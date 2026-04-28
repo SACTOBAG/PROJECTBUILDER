@@ -6,7 +6,8 @@ import { createClient } from '@supabase/supabase-js';
 import brewRoutes from './routes/brews.js';
 import pantryRoutes from './routes/pantry.js';
 import recipeRoutes from './routes/recipes.js';
-import smartAdjustRoutes from './routes/smartAdjust.js';
+import feedbackRoutes from './routes/feedback.js';
+import ingredientRoutes from './routes/ingredients.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -25,11 +26,18 @@ export const supabase = createClient(
 app.use('/api/brews', brewRoutes);
 app.use('/api/pantry', pantryRoutes);
 app.use('/api/recipes', recipeRoutes);
-app.use('/api/smart-adjust', smartAdjustRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/ingredients', ingredientRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Centralized error handler
+app.use((err, _req, res, _next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
 app.listen(PORT, () => {

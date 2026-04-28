@@ -1,0 +1,552 @@
+openapi: 3.0.3
+info:
+  title: Brew Master API
+  description: REST API for the Brew Master coffee brewing platform.
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:3001
+    description: Local development
+
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    example: '2026-04-27T12:00:00.000Z'
+
+  /api/brews:
+    get:
+      summary: List brew logs
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Filter brews by user
+      responses:
+        '200':
+          description: Array of brew logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Brew'
+              example:
+                data:
+                  - brew_id: c1000000-0000-0000-0000-000000000001
+                    user_id: a1000000-0000-0000-0000-000000000001
+                    grind_size: coarse
+                    bean_type: Colombian Supremo
+                    water_temp_f: 200
+                    duration: 240
+                    start_date: '2026-04-20T07:15:00+00:00'
+    post:
+      summary: Create a brew log
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, duration]
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                recipe_id:
+                  type: string
+                  format: uuid
+                grind_size:
+                  type: string
+                bean_type:
+                  type: string
+                water_temp_f:
+                  type: integer
+                start_date:
+                  type: string
+                  format: date-time
+                duration:
+                  type: integer
+                  description: Brew duration in seconds
+            example:
+              user_id: a1000000-0000-0000-0000-000000000001
+              grind_size: medium
+              bean_type: Ethiopian Yirgacheffe
+              water_temp_f: 205
+              duration: 210
+      responses:
+        '201':
+          description: Brew created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Brew'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/brews/{id}:
+    get:
+      summary: Get a single brew log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Single brew
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Brew'
+        '404':
+          description: Brew not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/recipes:
+    get:
+      summary: List public recipes
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Include private recipes for this user
+      responses:
+        '200':
+          description: Array of recipes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+    post:
+      summary: Create a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, title, instructions]
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                instructions:
+                  type: string
+                viewing_status:
+                  type: string
+                  enum: [public, private]
+                  default: private
+            example:
+              user_id: a1000000-0000-0000-0000-000000000001
+              title: Morning Pour Over
+              instructions: 'Grind 20g medium-fine. Bloom 40ml. Pour to 320ml.'
+              viewing_status: public
+      responses:
+        '201':
+          description: Recipe created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Recipe'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/recipes/{id}:
+    get:
+      summary: Get a single recipe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Single recipe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Recipe not found
+
+  /api/recipes/{id}/ratings:
+    post:
+      summary: Rate a recipe (stars only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, stars]
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                stars:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+            example:
+              user_id: a1000000-0000-0000-0000-000000000002
+              stars: 5
+      responses:
+        '201':
+          description: Rating saved
+        '400':
+          description: Validation error
+
+  /api/pantry:
+    get:
+      summary: List pantry items
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Array of pantry items with joined ingredient data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PantryItem'
+    post:
+      summary: Add a pantry item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, ingredient_id]
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                ingredient_id:
+                  type: string
+                  format: uuid
+                quantity_remaining:
+                  type: string
+                expiration_date:
+                  type: string
+                  format: date
+                low_stock_threshold:
+                  type: number
+            example:
+              user_id: a1000000-0000-0000-0000-000000000001
+              ingredient_id: d1000000-0000-0000-0000-000000000001
+              quantity_remaining: '500'
+              expiration_date: '2026-07-01'
+              low_stock_threshold: 50
+      responses:
+        '201':
+          description: Pantry item created
+        '400':
+          description: Validation error
+
+  /api/pantry/{id}:
+    patch:
+      summary: Update a pantry item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity_remaining:
+                  type: string
+                expiration_date:
+                  type: string
+                  format: date
+                low_stock_threshold:
+                  type: number
+      responses:
+        '200':
+          description: Updated pantry item
+        '400':
+          description: Update failed
+    delete:
+      summary: Delete a pantry item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Pantry item deleted
+
+  /api/feedback/{brew_id}:
+    get:
+      summary: Get feedback for a brew
+      parameters:
+        - name: brew_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Feedback record with smart-adjust suggestion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Feedback'
+        '404':
+          description: No feedback found
+
+  /api/feedback:
+    post:
+      summary: Submit feedback for a brew (triggers smart-adjust)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [brew_id, rating, taste_notes]
+              properties:
+                brew_id:
+                  type: string
+                  format: uuid
+                rating:
+                  type: number
+                  minimum: 1
+                  maximum: 5
+                taste_notes:
+                  type: string
+            example:
+              brew_id: c1000000-0000-0000-0000-000000000001
+              rating: 3.5
+              taste_notes: Too bitter and slightly over-extracted
+      responses:
+        '201':
+          description: Feedback created with suggestion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Feedback'
+        '400':
+          description: Validation error
+
+  /api/ingredients:
+    get:
+      summary: List all ingredients
+      responses:
+        '200':
+          description: Array of ingredients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ingredient'
+
+components:
+  schemas:
+    Brew:
+      type: object
+      properties:
+        brew_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        recipe_id:
+          type: string
+          format: uuid
+          nullable: true
+        grind_size:
+          type: string
+        bean_type:
+          type: string
+        water_temp_f:
+          type: integer
+        start_date:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    Recipe:
+      type: object
+      properties:
+        recipe_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        instructions:
+          type: string
+        viewing_status:
+          type: string
+          enum: [public, private]
+        created_at:
+          type: string
+          format: date-time
+
+    Ingredient:
+      type: object
+      properties:
+        ingredient_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        unit_type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    PantryItem:
+      type: object
+      properties:
+        pantry_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        ingredient_id:
+          type: string
+          format: uuid
+        quantity_remaining:
+          type: string
+        expiration_date:
+          type: string
+          format: date
+          nullable: true
+        low_stock_threshold:
+          type: number
+        ingredients:
+          type: object
+          properties:
+            name:
+              type: string
+            unit_type:
+              type: string
+
+    Feedback:
+      type: object
+      properties:
+        feedback_id:
+          type: string
+          format: uuid
+        brew_id:
+          type: string
+          format: uuid
+        rating:
+          type: number
+        taste_notes:
+          type: string
+        suggestion:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

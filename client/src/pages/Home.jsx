@@ -1,43 +1,49 @@
 import { Link } from 'react-router-dom';
 import {
-  BookOpen,
-  ClipboardList,
   ShoppingBasket,
-  ChefHat,
-  CalendarDays,
+  ClipboardList,
+  BookOpen,
+  Coffee as CoffeeIcon,
   Sparkles,
+  Share2,
 } from 'lucide-react';
 
 const cards = [
   {
-    to: '/brew',
-    icon: BookOpen,
-    title: 'Brew Guide',
-    desc: 'Step-by-step tutorials for every method.',
+    to: '/pantry',
+    icon: ShoppingBasket,
+    title: 'Digital Pantry',
+    desc: 'Track beans, ingredients, and expiration dates.',
   },
   {
     to: '/log',
     icon: ClipboardList,
-    title: 'Brew Log',
-    desc: 'Track brews, ratios, and flavor notes.',
+    title: 'Create Brew Log',
+    desc: 'Record grind, time, temp, and rate your brew.',
   },
   {
-    to: '/pantry',
-    icon: ShoppingBasket,
-    title: 'Digital Pantry',
-    desc: 'Manage beans, stock, and expiration dates.',
+    to: '/learn',
+    icon: BookOpen,
+    title: 'Learn Coffee Skills',
+    desc: 'Tutorials for methods and standard drinks.',
   },
   {
-    to: '/recipes',
-    icon: ChefHat,
-    title: 'Recipes',
-    desc: 'Discover and share custom recipes.',
+    to: '/suggestions',
+    icon: CoffeeIcon,
+    title: 'Drink Suggestions',
+    desc: 'Discover recipes, save favorites, and swap ingredients.',
   },
   {
-    to: '/planner',
-    icon: CalendarDays,
-    title: 'Weekly Planner',
-    desc: 'Plan your drinks for the week.',
+    to: '/improve',
+    icon: Sparkles,
+    title: 'Improve Coffee',
+    desc: 'Get smart-adjust tips for taste, grind, and temp.',
+  },
+  {
+    to: '/share',
+    icon: Share2,
+    title: 'Share With Others',
+    desc: 'Share recipes, browse public brews, and rate with stars.',
   },
 ];
 
@@ -49,24 +55,24 @@ export default function Home() {
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="h-5 w-5" />
           <span className="text-sm font-medium uppercase tracking-wide opacity-90">
-            Smart Adjust
+            Brew Master
           </span>
         </div>
         <h2 className="text-2xl font-bold leading-tight">
           Brew better coffee,<br />one cup at a time.
         </h2>
         <p className="mt-2 text-sm opacity-80">
-          Rate your last brew and get personalized tips to dial in your next cup.
+          Personalized brewing guidance, smart feedback, and a community to share with.
         </p>
         <Link
-          to="/brew"
+          to="/log"
           className="mt-4 inline-block rounded-full bg-white px-5 py-2 text-sm font-semibold text-coffee-600 shadow transition hover:shadow-md"
         >
-          Start Brewing
+          Log a Brew
         </Link>
       </div>
 
-      {/* Quick-access cards */}
+      {/* Quick-access cards — matches site map */}
       <div className="grid grid-cols-2 gap-3">
         {cards.map(({ to, icon: Icon, title, desc }) => (
           <Link

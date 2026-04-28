@@ -1,20 +1,21 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import {
   Coffee,
-  BookOpen,
-  ClipboardList,
   ShoppingBasket,
-  CalendarDays,
-  ChefHat,
+  ClipboardList,
+  BookOpen,
+  Lightbulb,
+  Sparkles,
+  Share2,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/', icon: Coffee, label: 'Home' },
-  { to: '/brew', icon: BookOpen, label: 'Brew' },
-  { to: '/log', icon: ClipboardList, label: 'Log' },
   { to: '/pantry', icon: ShoppingBasket, label: 'Pantry' },
-  { to: '/recipes', icon: ChefHat, label: 'Recipes' },
-  { to: '/planner', icon: CalendarDays, label: 'Planner' },
+  { to: '/log', icon: ClipboardList, label: 'Brew' },
+  { to: '/learn', icon: BookOpen, label: 'Learn' },
+  { to: '/improve', icon: Sparkles, label: 'Improve' },
+  { to: '/share', icon: Share2, label: 'Share' },
 ];
 
 export default function Layout() {
