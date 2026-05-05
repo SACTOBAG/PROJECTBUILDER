@@ -11,7 +11,7 @@ Browser → AWS Amplify (React SPA) → AWS API Gateway + Lambda (Express) → S
 | Resource | Value |
 |---|---|
 | Amplify App URL | `https://main.XXXXXXXXXX.amplifyapp.com` |
-| API Gateway URL | `https://XXXXXXXXXX.execute-api.us-east-1.amazonaws.com` |
+| API Gateway URL | `https://7p3imgld3c.execute-api.us-east-1.amazonaws.com` |
 | Lambda Function | `brewmaster-api-prod-api` |
 | API Gateway ID | _(from `serverless info`)_ |
 | Supabase Project | `racpxolokpixbbtklard` |
@@ -39,7 +39,7 @@ Set these in Amplify Console → App settings → Environment variables:
 |---|---|
 | `VITE_SUPABASE_URL` | `https://racpxolokpixbbtklard.supabase.co` |
 | `VITE_SUPABASE_ANON_KEY` | _(your anon key)_ |
-| `VITE_API_BASE` | `https://XXXXXXXXXX.execute-api.us-east-1.amazonaws.com/api` |
+| `VITE_API_BASE` | `https://7p3imgld3c.execute-api.us-east-1.amazonaws.com` |
 
 ### AWS Secrets Manager
 Store in secret `brewmaster/api/prod`:

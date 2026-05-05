@@ -5,7 +5,7 @@ A personalized, mobile-first coffee brewing platform designed to help home baris
 ## Live Application
 
 - **Frontend**: `https://main.XXXXXXXXXX.amplifyapp.com` _(update after Amplify deploy)_
-- **API**: `https://XXXXXXXXXX.execute-api.us-east-1.amazonaws.com/api/health` _(update after Lambda deploy)_
+- **API**: `https://7p3imgld3c.execute-api.us-east-1.amazonaws.com/api/health`
 
 ## Features
 
