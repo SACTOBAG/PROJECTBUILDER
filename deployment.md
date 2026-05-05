@@ -10,7 +10,7 @@ Browser → AWS Amplify (React SPA) → AWS API Gateway + Lambda (Express) → S
 
 | Resource | Value |
 |---|---|
-| Amplify App URL | `https://main.XXXXXXXXXX.amplifyapp.com` |
+| Amplify App URL | `https://main.d3ltomhjppu686.amplifyapp.com` |
 | API Gateway URL | `https://7p3imgld3c.execute-api.us-east-1.amazonaws.com` |
 | Lambda Function | `brewmaster-api-prod-api` |
 | API Gateway ID | _(from `serverless info`)_ |
