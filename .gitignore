@@ -27,3 +27,6 @@ npm-debug.log*
 
 # Supabase local
 .supabase/
+
+# Serverless
+.serverless/

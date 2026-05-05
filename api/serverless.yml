@@ -1,0 +1,37 @@
+service: brewmaster-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: prod
+  region: us-east-1
+  memorySize: 512
+  timeout: 15
+  environment:
+    SECRET_NAME: brewmaster/api/prod
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource: "arn:aws:secretsmanager:us-east-1:*:secret:brewmaster/api/prod-*"
+
+functions:
+  api:
+    handler: lambda.handler
+    events:
+      - httpApi:
+          path: /api/{proxy+}
+          method: ANY
+      - httpApi:
+          path: /api/health
+          method: GET
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3001
+    noPrependStageInUrl: true

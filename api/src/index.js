@@ -9,7 +9,7 @@ import recipeRoutes from './routes/recipes.js';
 import feedbackRoutes from './routes/feedback.js';
 import ingredientRoutes from './routes/ingredients.js';
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
@@ -40,6 +40,9 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`Brew Master API running on http://localhost:${PORT}`);
-});
+// Only start listening when running standalone (not in Lambda)
+if (!process.env.LAMBDA_TASK_ROOT) {
+  app.listen(PORT, () => {
+    console.log(`Brew Master API running on http://localhost:${PORT}`);
+  });
+}
